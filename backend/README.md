@@ -54,7 +54,6 @@ On first startup, a default admin user is created:
 - `POST /users/change-password` - Change password
 
 ### Admin (`/admin`)
-- `POST /admin/register` - Register new admin (should be restricted)
 - `GET /admin/dashboard/stats` - Get dashboard statistics
 - `GET /admin/users` - List all users (with filtering)
 - `GET /admin/users/{user_id}` - Get specific user
@@ -62,43 +61,6 @@ On first startup, a default admin user is created:
 - `PUT /admin/users/{user_id}/activate` - Activate user
 - `DELETE /admin/users/{user_id}` - Delete user
 - `GET /admin/actions` - Audit log of admin actions
-
-## Project Structure
-
-```
-backend/
-├── main.py              # FastAPI application entry point
-├── config.py            # Configuration settings
-├── database.py          # Database setup
-├── models.py            # SQLAlchemy models
-├── schemas.py           # Pydantic request/response schemas
-├── auth.py              # Authentication utilities
-├── requirements.txt     # Python dependencies
-├── .env.example         # Example environment variables
-├── .gitignore           # Git ignore rules
-└── routes/              # API route handlers
-    ├── __init__.py
-    ├── auth.py          # Authentication routes
-    ├── users.py         # User profile routes
-    └── admin.py         # Admin management routes
-```
-
-## Database Models
-
-### User
-Represents both clients and admins with roles and verification status.
-
-### Entity
-Financial contexts owned by clients (personal, freelance, business, etc.)
-
-### Transaction
-Income and expense records within entities with categories
-
-### TransactionCategories
-Categorization for income and expenses
-
-### AdminAction
-Audit log for all admin actions on the system
 
 ## Authentication
 
