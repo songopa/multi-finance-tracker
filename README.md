@@ -1,4 +1,5 @@
-# multi-finance-tracker
+# Multi-Finance-Tracker
 
-## Quote - Ju
- - The best time to plant a tree was 10years ago but the next best time is today! -- Unknown
+## Favorite Quotes
+ - "Every decision you make there is a price to pay, either direct or inderict" - Songopa
+ - "Never stop learning adn keep creating" - Lizandro
