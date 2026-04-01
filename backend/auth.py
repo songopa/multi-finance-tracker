@@ -12,14 +12,14 @@ from models import User, UserRole
 from schemas import TokenData
 
 # Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # HTTP Bearer security scheme
 security = HTTPBearer()
 
 
 def hash_password(password: str) -> str:
-    """Hash a password using bcrypt"""
+    """Hash a password using argon2"""
     return pwd_context.hash(password)
 
 

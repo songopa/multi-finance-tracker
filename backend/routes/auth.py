@@ -15,7 +15,7 @@ from auth import (
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
-
+@router.post("/register", response_model=UserResponse)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     """
     Register a new client user.
@@ -24,8 +24,15 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     - **username**: Username (must be unique, 3-50 characters)
     - **full_name**: Optional full name
     - **password**: Password (minimum 8 characters)
+    - **confirm_password**: Must match the password field
     """
     
+    if user_data.password != user_data.confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Passwords do not match",
+        )
+
     # Check if user already exists
     existing_user = db.query(User).filter(
         (User.email == user_data.email) | (User.username == user_data.username)

@@ -3,10 +3,11 @@ uvicorn[standard]
 sqlalchemy
 python-multipart
 python-jose[cryptography]
-passlib[bcrypt]
-bcrypt==3.2.2
+passlib
 pydantic
 pydantic-settings
 alembic
 python-dotenv
 email-validator
+argon2-cffi
+bcrypt
