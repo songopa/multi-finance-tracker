@@ -33,6 +33,7 @@ def create_entity(
     db_entity = Entity(
         name=entity_data.name,
         description=entity_data.description,
+        entity_type=entity_data.entity_type,
         owner_id=current_user.id,
     )
     
@@ -42,8 +43,18 @@ def create_entity(
     
     return db_entity
 
+@router.get("/", response_model=list[EntityResponse])
+def get_entities(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """
+    Get a list of all entities for the current user.
+    """
+    
+    entities = db.query(Entity).filter(Entity.owner_id == current_user.id).all()
+    
+    return entities
+
 @router.get("/{entity_id}", response_model=EntityResponse)
-def get_entity(entity_id: int, db: Session = Depends(get_db)):
+def get_entity(entity_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Get an entity by its ID.
     
@@ -109,3 +120,32 @@ def update_entity(
     db.refresh(entity)
     
     return entity
+
+@router.delete("/{entity_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_entity(
+    entity_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Delete an entity by its ID.
+    
+    - **entity_id**: ID of the entity to delete
+    """
+    
+    entity = db.query(Entity).filter(Entity.id == entity_id).first()
+    
+    if not entity:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Entity not found",
+        )
+    
+    if entity.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this entity",
+        )
+    
+    db.delete(entity)
+    db.commit()

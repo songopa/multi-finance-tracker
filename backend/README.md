@@ -41,27 +41,6 @@ On first startup, a default admin user is created:
 
 **IMPORTANT**: Change the default password immediately in production!
 
-## API Endpoints
-
-### Authentication (`/auth`)
-- `POST /auth/register` - Register new client user
-- `POST /auth/login` - Login and receive JWT tokens
-- `POST /auth/refresh` - Refresh access token
-
-### Users (`/users`)
-- `GET /users/me` - Get current user profile
-- `PUT /users/me` - Update current user profile
-- `POST /users/change-password` - Change password
-
-### Admin (`/admin`)
-- `GET /admin/dashboard/stats` - Get dashboard statistics
-- `GET /admin/users` - List all users (with filtering)
-- `GET /admin/users/{user_id}` - Get specific user
-- `PUT /admin/users/{user_id}/deactivate` - Deactivate user
-- `PUT /admin/users/{user_id}/activate` - Activate user
-- `DELETE /admin/users/{user_id}` - Delete user
-- `GET /admin/actions` - Audit log of admin actions
-
 ## Authentication
 
 The API uses JWT (JSON Web Tokens) for authentication:

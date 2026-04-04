@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database import engine, Base, SessionLocal
 from models import User, UserRole
 from auth import hash_password
-from routes import auth, users, admin
+from routes import auth, users, admin, entity, transaction
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -30,6 +30,8 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(admin.router)
+app.include_router(entity.router)
+app.include_router(transaction.router)
 
 
 @app.get("/")

@@ -65,10 +65,12 @@ class Transaction(Base):
     __tablename__ = "transactions"
     
     id = Column(Integer, primary_key=True, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False, index=True)
+    category_id = Column(Integer, ForeignKey("transaction_categories.id"), nullable=False, index=True)
     transaction_type = Column(Enum(TransactionType), default=TransactionType.EXPENSE, nullable=False)
     amount = Column(Integer, nullable=False)  
-    category = Column(String, nullable=False)  # e.g., "salary", "freelance", "food", "transport"
+    category_name = Column(String, nullable=False)  # e.g., "salary", "freelance", "food", "transport"
     description = Column(String, nullable=True)
     transaction_date = Column(DateTime, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -76,7 +78,7 @@ class Transaction(Base):
     
     # Relationships
     entity = relationship("Entity", back_populates="transactions")
-    
+    transaction_category = relationship("TransactionCategory", back_populates="transactions")
     def __repr__(self):
         return f"<Transaction(id={self.id}, entity_id={self.entity_id}, type={self.transaction_type})>"
     
@@ -89,6 +91,9 @@ class TransactionCategory(Base):
     type = Column(Enum(TransactionType), nullable=False)  # Category type (income or expense)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    
+    # Relationships
+    transactions = relationship("Transaction", back_populates="transaction_category")
 
 class AdminAction(Base):
     """Admin audit log for tracking admin actions"""

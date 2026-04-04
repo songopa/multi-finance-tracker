@@ -99,6 +99,8 @@ class TransactionBase(BaseModel):
 
 class TransactionCreate(TransactionBase):
     """Schema for creating transaction"""
+    entity_id: int
+    category_id: int
     transaction_date: datetime
 
 
@@ -116,6 +118,30 @@ class TransactionResponse(TransactionBase):
     id: int
     entity_id: int
     transaction_date: datetime
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+# ==================== Transaction Category Schemas ====================
+
+class TransactionCategoryBase(BaseModel):
+    """Base transaction category schema"""
+    name: str = Field(..., min_length=1, max_length=100)
+    description: Optional[str] = None
+    type: str = Field(..., min_length=1)  # "income" or "expense"
+
+
+class TransactionCategoryCreate(TransactionCategoryBase):
+    """Schema for creating transaction category"""
+    pass
+
+
+class TransactionCategoryResponse(TransactionCategoryBase):
+    """Schema for transaction category response"""
+    id: int
     created_at: datetime
     updated_at: datetime
     
