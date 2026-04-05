@@ -6,8 +6,8 @@ from schemas import (
     TransactionCreate,
     TransactionResponse,
     TransactionUpdate,
-    TransactionCategoryCreate,
-    TransactionCategoryResponse,
+    CategoryCreate,
+    CategoryResponse,
 )
 from auth import get_current_user
 
@@ -128,9 +128,9 @@ def delete_transaction(transaction_id: int, db: Session = Depends(get_db), curre
     db.delete(transaction)
     db.commit()
 
-@router.post("/categories", response_model=TransactionCategoryResponse)
+@router.post("/categories", response_model=CategoryResponse)
 def create_transaction_category(
-    category: TransactionCategoryCreate,
+    category: CategoryCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -161,7 +161,7 @@ def create_transaction_category(
     return db_category
 
 
-@router.get("/categories", response_model=list[TransactionCategoryResponse])
+@router.get("/categories", response_model=list[CategoryResponse])
 def get_transaction_categories(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Get a list of all transaction categories.
@@ -171,10 +171,10 @@ def get_transaction_categories(db: Session = Depends(get_db), current_user: User
     
     return categories
 
-@router.put("/categories/{category_id}", response_model=TransactionCategoryResponse)
+@router.put("/categories/{category_id}", response_model=CategoryResponse)
 def update_transaction_category(
     category_id: int,
-    category: TransactionCategoryCreate,
+    category: CategoryCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
