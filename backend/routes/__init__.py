@@ -1,1 +1,1 @@
-# Routes package
+from routes import auth, users, admin, entity, categories, transactions, reports
