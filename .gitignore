@@ -58,3 +58,4 @@ logs/
 # OS
 Thumbs.db
 .Thumbs.db
+frontend/.vite/
