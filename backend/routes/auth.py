@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from datetime import timedelta
 
 from database import get_db
 from models import User, UserRole
@@ -10,114 +9,59 @@ from auth import (
     verify_password,
     create_access_token,
     create_refresh_token,
+    get_current_user,
 )
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
-@router.post("/register", response_model=UserResponse)
-def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    """
-    Register a new client user.
-    
-    - **email**: User's email address (must be unique)
-    - **username**: Username (must be unique, 3-50 characters)
-    - **full_name**: Optional full name
-    - **password**: Password (minimum 8 characters)
-    - **confirm_password**: Must match the password field
-    """
-    
-    if user_data.password != user_data.confirm_password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Passwords do not match",
-        )
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def register(data: UserCreate, db: Session = Depends(get_db)):
+    """Register a new client user."""
+    if data.password != data.confirm_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
 
-    # Check if user already exists
-    existing_user = db.query(User).filter(
-        (User.email == user_data.email) | (User.username == user_data.username)
+    existing = db.query(User).filter(
+        (User.email == data.email) | (User.username == data.username)
     ).first()
-    
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email or username already registered",
-        )
-    
-    # Create new user
-    db_user = User(
-        email=user_data.email,
-        username=user_data.username,
-        full_name=user_data.full_name,
-        hashed_password=hash_password(user_data.password),
+    if existing:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email or username already registered")
+
+    user = User(
+        email=data.email,
+        username=data.username,
+        full_name=data.full_name,
+        hashed_password=hash_password(data.password),
         role=UserRole.CLIENT,
     )
-    
-    db.add(db_user)
+    db.add(user)
     db.commit()
-    db.refresh(db_user)
-    
-    return db_user
+    db.refresh(user)
+    return user
 
 
 @router.post("/login", response_model=Token)
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
-    """
-    Login user and receive JWT tokens.
-    
-    - **email**: User's email address
-    - **password**: User's password
-    """
-    
-    # Find user by email
-    db_user = db.query(User).filter(User.email == credentials.email).first()
-    
-    if not db_user or not verify_password(credentials.password, db_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
-        )
-    
-    if not db_user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is inactive",
-        )
-    
-    # Create tokens
-    access_token = create_access_token(
-        user_id=db_user.id,
-        email=db_user.email,
-        role=db_user.role,
-    )
-    refresh_token = create_refresh_token(
-        user_id=db_user.id,
-        email=db_user.email,
-        role=db_user.role,
-    )
-    
+    """Login and receive JWT tokens."""
+    user = db.query(User).filter(User.email == credentials.email).first()
+
+    if not user or not verify_password(credentials.password, user.hashed_password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is inactive")
+
     return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
+        "access_token": create_access_token(user_id=user.id, email=user.email, role=user.role),
+        "refresh_token": create_refresh_token(user_id=user.id, email=user.email, role=user.role),
         "token_type": "bearer",
     }
 
 
 @router.post("/refresh", response_model=Token)
-def refresh_token(current_user: User = Depends(get_db)):
-    """
-    Refresh access token using refresh token.
-    
-    **Note**: This is simplified - in production, you should validate the refresh token properly.
-    """
-    
-    access_token = create_access_token(
-        user_id=current_user.id,
-        email=current_user.email,
-        role=current_user.role,
-    )
-    
+def refresh_token(current_user: User = Depends(get_current_user)):
+    """Get a new access token. Send your refresh token as the Bearer token."""
     return {
-        "access_token": access_token,
+        "access_token": create_access_token(user_id=current_user.id, email=current_user.email, role=current_user.role),
         "token_type": "bearer",
     }
