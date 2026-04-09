@@ -59,3 +59,6 @@ logs/
 Thumbs.db
 .Thumbs.db
 frontend/.vite/
+
+# Node
+node_modules/
