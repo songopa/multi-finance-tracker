@@ -99,7 +99,6 @@ class CategoryResponse(BaseModel):
 class TransactionCreate(BaseModel):
     entity_id: int
     category_id: int
-    category: str
     transaction_type: TransactionType
     amount: float = Field(..., gt=0)
     description: Optional[str] = None
@@ -107,7 +106,6 @@ class TransactionCreate(BaseModel):
 
 class TransactionUpdate(BaseModel):
     category_id: Optional[int] = None
-    category: Optional[str] = None
     transaction_type: Optional[TransactionType] = None
     amount: Optional[float] = Field(None, gt=0)
     description: Optional[str] = None

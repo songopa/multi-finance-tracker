@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base, SessionLocal
 from models import User, UserRole
 from auth import hash_password
-from routes import auth, users, admin, entity, categories, transactions, reports, transaction
+from routes import auth, users, admin, entity, categories, transactions, reports, transactions
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
@@ -29,7 +29,6 @@ app.include_router(entity.router)
 app.include_router(categories.router)
 app.include_router(transactions.router)
 app.include_router(reports.router)
-app.include_router(transaction.router)
 
 @app.get("/")
 def read_root():

@@ -79,7 +79,7 @@ def list_transactions(
     if date_to:
         query = query.filter(Transaction.transaction_date <= date_to)
 
-    return query.order_by(Transaction.transaction_date.desc()).offset(skip).limit(limit).all()
+    return query.order_by(Transaction.transaction_date.asc()).offset(skip).limit(limit).all()
 
 
 @router.get("/{transaction_id}", response_model=TransactionResponse)
