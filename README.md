@@ -19,48 +19,6 @@ Most individuals manage finances from multiple contexts such as personal spendin
 - **Database**: SQLite
 - **Frontend**: React
 
-
-## 📋 API Endpoints
-
-### Authentication
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `POST /auth/refresh` - Token refresh
-
-### User Management
-- `GET /users/me` - Get current user profile
-- `PUT /users/me` - Update user profile
-- `POST /users/change-password` - Change password
-
-### Entities
-- `POST /entities` - Create entity
-- `GET /entities` - List user's entities
-- `GET /entities/{id}` - Get entity details
-- `PUT /entities/{id}` - Update entity
-- `DELETE /entities/{id}` - Delete entity
-
-### Transactions
-- `POST /transactions` - Create transaction
-- `GET /transactions` - List transactions (with filters)
-- `GET /transactions/{id}` - Get transaction details
-- `PUT /transactions/{id}` - Update transaction
-- `DELETE /transactions/{id}` - Delete transaction
-
-### Categories
-- `POST /categories` - Create category
-- `GET /categories` - List categories
-- `PUT /categories/{id}` - Update category
-- `DELETE /categories/{id}` - Delete category
-
-### Reports
-- `GET /reports/entity/{id}` - Generate entity report
-
-### Admin
-- `GET /admin/dashboard` - Admin dashboard statistics
-- `GET /admin/users` - List all users
-- `PUT /admin/users/{id}/activate` - Activate user
-- `PUT /admin/users/{id}/deactivate` - Deactivate user
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -121,8 +79,8 @@ pytest --cov=. --cov-report=html  # With coverage
 
 ## 👨‍💻 Development Team
 
-Julius Songopa
-Ferrin Mutuku
+- Julius Songopa
+- Ferrin Mutuku
 
 Multi-Finance Tracker - CSE 499 Senior Project
 Brigham Young University, 2026
