@@ -14,3 +14,4 @@ bcrypt
 pytest
 httpx
 pytest-asyncio
+slowapi

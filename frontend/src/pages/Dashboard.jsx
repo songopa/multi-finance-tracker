@@ -1,7 +1,31 @@
 import { useEffect, useState } from 'react'
+import { Pie, Bar } from 'react-chartjs-2'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title
+} from 'chart.js'
 import { getEntities } from '../api/entities'
 import { getReport } from '../api/reports'
 import { Link } from 'react-router-dom'
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title)
+
+const COLORS = [
+  '#3B82F6',
+  '#10B981',
+  '#F59E0B',
+  '#EF4444',
+  '#8B5CF6',
+  '#EC4899',
+  '#14B8A6',
+  '#F97316'
+]
 
 export default function Dashboard() {
   const [entities, setEntities] = useState([])
@@ -26,6 +50,39 @@ export default function Dashboard() {
       .catch(() => setError('Failed to load report'))
       .finally(() => setLoading(false))
   }, [selectedEntity])
+
+  const incomeChartData = report && report.income_breakdown.length > 0 ? {
+    labels: report.income_breakdown.map(c => c.category_name),
+    datasets: [{
+      label: 'Income by Category',
+      data: report.income_breakdown.map(c => c.total),
+      backgroundColor: COLORS.slice(0, report.income_breakdown.length),
+      borderColor: COLORS.slice(0, report.income_breakdown.length),
+      borderWidth: 2
+    }]
+  } : null
+
+  const expenseChartData = report && report.expense_breakdown.length > 0 ? {
+    labels: report.expense_breakdown.map(c => c.category_name),
+    datasets: [{
+      label: 'Expenses by Category',
+      data: report.expense_breakdown.map(c => c.total),
+      backgroundColor: COLORS.slice(0, report.expense_breakdown.length),
+      borderColor: COLORS.slice(0, report.expense_breakdown.length),
+      borderWidth: 2
+    }]
+  } : null
+
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom'
+      }
+    }
+  }
 
   if (entities.length === 0) {
     return (
@@ -70,6 +127,27 @@ export default function Dashboard() {
               <span className="stat-label">Net Balance</span>
               <span className="stat-value">${report.net_balance.toLocaleString()}</span>
             </div>
+          </div>
+
+          <div className="charts-grid">
+
+            {incomeChartData && (
+              <div className="chart-card">
+                <h3>Income by Category</h3>
+                <div className="chart-container">
+                  <Pie data={incomeChartData} options={chartOptions} />
+                </div>
+              </div>
+            )}
+
+            {expenseChartData && (
+              <div className="chart-card">
+                <h3>Expenses by Category</h3>
+                <div className="chart-container">
+                  <Pie data={expenseChartData} options={chartOptions} />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="breakdown-grid">
